@@ -30,21 +30,7 @@
 <body class="index-page">
 
   <header id="header" class="header sticky-top">
-    <div class="topbar d-flex align-items-center">
-      <div class="container d-flex justify-content-center justify-content-md-between">
-        <div class="contact-info d-flex align-items-center">
-          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">contact@example.com</a></i>
-          <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
-        </div>
-        <div class="social-links d-none d-md-flex align-items-center">
-          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-          <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-        </div>
-      </div>
-    </div>
-
+    <!-- ... header & nav seperti semula ... -->
     <div class="branding d-flex align-items-center">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="{{ url_for('main.home') }}" class="logo d-flex align-items-center me-auto">
@@ -73,7 +59,15 @@
           <p>Berikut adalah hasil analisis dari gambar wajah yang Anda unggah.</p>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center align-items-start">
+          <!-- Preview Gambar di Kiri -->
+          <div class="col-lg-6 text-center mb-4">
+            <img src="{{ url_for('static', filename='uploads/' ~ image) }}"
+                 class="img-fluid rounded border"
+                 alt="Citra Terklasifikasi">
+          </div>
+
+          <!-- Box Hasil di Kanan -->
           <div class="col-lg-6">
             <div class="card p-4 shadow rounded-4 text-center">
               <h4 class="mb-3 text-secondary">Tingkat Keparahan Jerawat</h4>
@@ -83,13 +77,12 @@
                 <div class="display-5 fw-bold text-igascan mb-2">IGA 0 – Clear</div>
                 <h5 class="fw-semibold mb-2 text-igascan">Saran Perawatan:</h5>
                 <ul>
-                  <li>Jaga kebersihan wajah dengan mencuci 2x sehari.</li>
+                  <li>Jaga kebersihan wajah dengan mencuci 2× sehari.</li>
                   <li>Gunakan pelembap ringan dan sunscreen.</li>
                   <li>Pertahankan gaya hidup sehat dan pola makan seimbang.</li>
                 </ul>
                 <div class="alert alert-success">Tidak diperlukan pengobatan khusus.</div>
               </div>
-
               <div class="result-block" id="iga-1" style="display: none;">
                 <div class="display-5 fw-bold text-igascan mb-2">IGA 1 – Almost Clear</div>
                 <h5 class="fw-semibold mb-2 text-igascan">Saran Perawatan:</h5>
@@ -99,7 +92,6 @@
                 </ul>
                 <div class="alert alert-success">Tidak perlu konsultasi dokter kecuali gejala memburuk.</div>
               </div>
-
               <div class="result-block" id="iga-2" style="display: none;">
                 <div class="display-5 fw-bold text-igascan mb-2">IGA 2 – Mild</div>
                 <h5 class="fw-semibold mb-2 text-igascan">Saran Perawatan:</h5>
@@ -110,7 +102,6 @@
                 </ul>
                 <div class="alert alert-info">Pantau kondisi. Konsultasi bila tidak membaik dalam 4 minggu.</div>
               </div>
-
               <div class="result-block" id="iga-3" style="display: none;">
                 <div class="display-5 fw-bold text-igascan mb-2">IGA 3 – Moderate</div>
                 <h5 class="fw-semibold mb-2 text-igascan">Saran Perawatan:</h5>
@@ -121,7 +112,6 @@
                 </ul>
                 <div class="alert alert-warning">Segera konsultasi jika jerawat nyeri atau meluas.</div>
               </div>
-
               <div class="result-block" id="iga-4" style="display: none;">
                 <div class="display-5 fw-bold text-igascan mb-2">IGA 4 – Severe</div>
                 <h5 class="fw-semibold mb-2 text-igascan">Saran Perawatan:</h5>
@@ -132,7 +122,6 @@
                 </ul>
                 <div class="alert alert-danger">Penanganan profesional sangat dianjurkan.</div>
               </div>
-
               <div class="result-block" id="tidak-terdeteksi" style="display: none;">
                 <div class="display-5 fw-bold text-danger mb-2">Tidak Terdeteksi</div>
                 <h5 class="fw-semibold mb-2 text-danger">Model tidak mendeteksi jerawat</h5>
@@ -148,18 +137,25 @@
     </section>
   </main>
 
-  <!-- Script dinamis berdasarkan label -->
+  <!-- Tampilkan blok sesuai label -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const label = "{{ label|lower }}";
-      const id = label === 'tidak terdeteksi' ? 'tidak-terdeteksi' : label.replace('iga', 'iga-');
+      const id = label === 'tidak terdeteksi'
+        ? 'tidak-terdeteksi'
+        : label.replace('iga', 'iga-');
       const el = document.getElementById(id);
       if (el) el.style.display = 'block';
     });
   </script>
 
   <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
 
   <!-- Vendor JS -->
   <script src="{{ url_for('static', filename='assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -169,7 +165,6 @@
   <script src="{{ url_for('static', filename='assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
   <script src="{{ url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
   <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
-
 </body>
 
 </html>

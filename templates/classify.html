@@ -29,25 +29,7 @@
 
 <body class="index-page">
   <header id="header" class="header sticky-top">
-    <div class="topbar d-flex align-items-center">
-      <div class="container d-flex justify-content-center justify-content-md-between">
-        <div class="contact-info d-flex align-items-center">
-          <i class="bi bi-envelope d-flex align-items-center">
-            <a href="mailto:contact@example.com">contact@example.com</a>
-          </i>
-          <i class="bi bi-phone d-flex align-items-center ms-4">
-            <span>+1 5589 55488 55</span>
-          </i>
-        </div>
-        <div class="social-links d-none d-md-flex align-items-center">
-          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-          <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-        </div>
-      </div>
-    </div>
-
+    <!-- ... header & nav seperti semula ... -->
     <div class="branding d-flex align-items-center">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="{{ url_for('main.home') }}" class="logo d-flex align-items-center me-auto">
@@ -75,27 +57,99 @@
           <p>Gunakan fitur ini untuk mengetahui tingkat keparahan jerawat Anda berdasarkan Skala IGA.</p>
         </div>
 
+        <div class="text-center mb-4">
+          <button class="btn btn-outline-primary me-2" onclick="showUpload()">Upload Gambar</button>
+          <button class="btn btn-outline-success" onclick="showCamera()">Gunakan Kamera</button>
+        </div>
+
         <div class="row justify-content-center align-items-start gy-5">
-          <!-- Form Upload -->
-          <div class="col-lg-6">
+          <!-- ===== Upload Section ===== -->
+          <div class="col-lg-6" id="upload-section">
             <div class="card p-4 shadow-sm border-0 rounded-4">
               <h5 class="mb-3 fw-bold">Unggah Citra Wajah</h5>
-              <form action="{{ url_for('main.classify') }}" method="post" enctype="multipart/form-data">
+              <form action="{{ url_for('main.classify') }}"
+                    method="post"
+                    enctype="multipart/form-data">
                 <div class="mb-3">
                   <label for="imageUpload" class="form-label">Pilih gambar wajah (JPG atau PNG)</label>
-                  <input class="form-control" type="file" id="imageUpload" name="image" accept=".jpg, .jpeg, .png" required>
+                  <input class="form-control"
+                         type="file"
+                         id="imageUpload"
+                         name="image"
+                         accept=".jpg, .jpeg, .png"
+                         required>
                 </div>
                 <div class="text-end">
-                  <button type="submit" class="btn" style="background-color: #1977cc; color: white;">Klasifikasikan Sekarang</button>
+                  <button type="submit"
+                          class="btn"
+                          style="background-color: #1977cc; color: white;">
+                    Klasifikasikan Sekarang
+                  </button>
                 </div>
               </form>
             </div>
           </div>
 
-          <!-- Panduan dan Contoh -->
+          <!-- ===== Kamera Section ===== -->
+          <div class="col-lg-6" id="camera-section" style="display: none;">
+            <div class="card p-4 shadow-sm border-0 rounded-4">
+              <h5 class="mb-3 fw-bold">Ambil Foto dari Kamera</h5>
+              <form action="{{ url_for('main.classify') }}"
+                    method="post"
+                    enctype="multipart/form-data">
+
+                <!-- Video dan Preview -->
+                <video id="camera"
+                       autoplay
+                       playsinline
+                       width="100%"
+                       class="rounded border mb-2"></video>
+                <img id="preview-photo"
+                     class="img-fluid rounded border mb-2"
+                     style="display: none;"
+                     alt="Hasil Foto">
+
+                <!-- Canvas & Hidden Input -->
+                <canvas id="canvas" style="display: none;"></canvas>
+                <input type="file"
+                       name="image"
+                       id="imageInput"
+                       hidden>
+
+                <!-- Tombol Kontrol -->
+                <div class="d-flex justify-content-end gap-2 mb-3">
+                  <button type="button"
+                          class="btn btn-outline-primary"
+                          onclick="startCamera()">
+                    Aktifkan Kamera
+                  </button>
+                  <button type="button"
+                          class="btn btn-primary"
+                          onclick="takePhoto()">
+                    Ambil Foto
+                  </button>
+                  <button type="button"
+                          class="btn btn-warning"
+                          onclick="retakePhoto()">
+                    Ulangi Foto
+                  </button>
+                </div>
+
+                <!-- Tombol Submit -->
+                <button type="submit"
+                        class="btn btn-success w-100">
+                  Upload Gambar dari Kamera
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- ===== Panduan & Contoh ===== -->
           <div class="col-lg-6">
             <div class="card p-4 shadow-sm border-0 rounded-4 bg-light">
-              <h5 class="mb-3 fw-bold"><i class="bi bi-question-circle-fill me-2"></i>Panduan Pengguna</h5>
+              <h5 class="mb-3 fw-bold">
+                <i class="bi bi-question-circle-fill me-2"></i>Panduan Pengguna
+              </h5>
               <ul class="mb-4">
                 <li>Unggah citra wajah dengan format JPG atau PNG.</li>
                 <li>Pastikan wajah terlihat jelas, tidak blur atau terhalang.</li>
@@ -103,7 +157,9 @@
                 <li>Hanya satu wajah dalam satu citra untuk hasil akurat.</li>
               </ul>
               <h6 class="fw-semibold mb-2">Contoh Citra yang Sesuai:</h6>
-              <img src="{{ url_for('static', filename='assets/img/wajah-benar.png') }}" alt="Contoh wajah yang benar" class="img-fluid rounded border">
+              <img src="{{ url_for('static', filename='assets/img/wajah-benar.png') }}"
+                   alt="Contoh wajah yang benar"
+                   class="img-fluid rounded border">
             </div>
           </div>
         </div>
