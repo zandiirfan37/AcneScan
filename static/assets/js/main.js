@@ -183,3 +183,58 @@
   document.addEventListener('scroll', navmenuScrollspy);
 
 })();
+
+function showUpload() {
+  document.getElementById('upload-section').style.display = 'block';
+  document.getElementById('camera-section').style.display = 'none';
+}
+
+function showCamera() {
+  document.getElementById('upload-section').style.display = 'none';
+  document.getElementById('camera-section').style.display = 'block';
+  startCamera();
+}
+
+function startCamera() {
+  const video = document.getElementById('camera');
+  if (!navigator.mediaDevices?.getUserMedia) {
+    alert("Browser tidak mendukung akses kamera.");
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => { alert("Gagal mengakses kamera: " + err); });
+}
+
+function takePhoto() {
+  const video   = document.getElementById('camera');
+  const canvas  = document.getElementById('canvas');
+  const input   = document.getElementById('imageInput');
+  const preview = document.getElementById('preview-photo');
+
+  const ctx = canvas.getContext('2d');
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob(blob => {
+    // inject ke input[file]
+    const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+    const dt   = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+
+    // tampilkan preview & sembunyikan video
+    preview.src             = canvas.toDataURL('image/jpeg');
+    preview.style.display   = 'block';
+    video.style.display     = 'none';
+  }, 'image/jpeg');
+}
+
+function retakePhoto() {
+  const video   = document.getElementById('camera');
+  const preview = document.getElementById('preview-photo');
+  preview.style.display = 'none';
+  video.style.display   = 'block';
+  startCamera();
+}
