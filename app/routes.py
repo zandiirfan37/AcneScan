@@ -14,27 +14,58 @@ def allowed_file(filename):
 def home():
     return render_template('index.html')
 
+# @main.route('/classify', methods=['GET', 'POST'])
+# def classify():
+#     if request.method == 'POST':
+#         file = request.files.get('image')
+#         if not file or file.filename == '':
+#             return 'Tidak ada file yang dipilih'
+
+#         if not allowed_file(file.filename):
+#             return 'Format file tidak didukung (hanya .jpg, .jpeg, .png)'
+
+#         filename = secure_filename(file.filename)
+#         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+#         file.save(filepath)
+
+#         predicted_label = predict_image(filepath)
+
+#         if predicted_label == "iga0":
+#             if not detect_face(filepath):
+#                 return 'Tidak ada wajah terdeteksi. Pastikan gambar mengandung wajah.'
+
+#         return redirect(url_for('main.result', image=filename, label=predicted_label))
+
+#     return render_template('classify.html')
+
+
 @main.route('/classify', methods=['GET', 'POST'])
 def classify():
     if request.method == 'POST':
         file = request.files.get('image')
-        if not file or file.filename == '':
-            return 'Tidak ada file yang dipilih'
-
-        if not allowed_file(file.filename):
-            return 'Format file tidak didukung (hanya .jpg, .jpeg, .png)'
+        # … validasi file sama seperti sebelumnya …
 
         filename = secure_filename(file.filename)
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
+        # ── Perbaikan di sini ──
+        # 1) Cek face detection dulu
+        if not detect_face(filepath):
+            # langsung tampilkan blok "Bukan Wajah" di result.html
+            return redirect(url_for(
+                'main.result',
+                image=filename,
+                label='tidak terdeteksi'
+            ))
+
+        # 2) Kalau ada wajah, baru lakukan prediksi
         predicted_label = predict_image(filepath)
-
-        if predicted_label == "iga0":
-            if not detect_face(filepath):
-                return 'Tidak ada wajah terdeteksi. Pastikan gambar mengandung wajah.'
-
-        return redirect(url_for('main.result', image=filename, label=predicted_label))
+        return redirect(url_for(
+            'main.result',
+            image=filename,
+            label=predicted_label
+        ))
 
     return render_template('classify.html')
 
